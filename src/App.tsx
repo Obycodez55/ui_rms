@@ -1,6 +1,6 @@
 // Main App component
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import SearchForm from "./components/SearchForm";
 import StudentProfileCard from "./components/StudentProfileCard";
 import ResultsTable from "./components/ResultsTable";
@@ -14,6 +14,15 @@ const App: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string>("");
   const [hasSearched, setHasSearched] = useState(false);
+  const [isPageLoaded, setIsPageLoaded] = useState(false);
+
+  // Page load animation
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsPageLoaded(true);
+    }, 100);
+    return () => clearTimeout(timer);
+  }, []);
 
   const handleSearch = async (matricNo: string) => {
     setIsLoading(true);
@@ -50,39 +59,65 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 to-green-100 py-8 px-4">
+    <div className={`min-h-screen bg-gradient-to-br from-green-50 to-green-100 py-8 px-4 transition-all duration-1000 ${
+      isPageLoaded ? 'opacity-100' : 'opacity-0'
+    }`}>
       <div className="max-w-6xl mx-auto">
         {/* Show search form if no search has been made */}
         {!hasSearched && (
-          <SearchForm onSubmit={handleSearch} isLoading={isLoading} />
+          <div className={`transition-all duration-700 delay-200 ${
+            isPageLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+          }`}>
+            <SearchForm onSubmit={handleSearch} isLoading={isLoading} />
+          </div>
         )}
 
         {/* Show loading state */}
-        {isLoading && <LoadingSpinner />}
+        {isLoading && (
+          <div className={`transition-all duration-500 ${
+            isLoading ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
+          }`}>
+            <LoadingSpinner />
+          </div>
+        )}
 
         {/* Show error state */}
         {error && !isLoading && (
-          <ErrorMessage message={error} onRetry={handleRetry} />
+          <div className={`transition-all duration-500 ${
+            error ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+          }`}>
+            <ErrorMessage message={error} onRetry={handleRetry} />
+          </div>
         )}
 
         {/* Show results */}
         {studentData && !isLoading && !error && (
-          <div>
+          <div className={`transition-all duration-700 ${
+            studentData ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+          }`}>
             {/* Student Profile */}
-            <StudentProfileCard student={studentData.student_data} />
+            <div className="animate-fadeInUp">
+              <StudentProfileCard student={studentData.student_data} />
+            </div>
 
             {/* Results Tables */}
             <div className="space-y-6">
-              <ResultsTable courses={getCurrentSessionCourses()} semester="1" />
-              <ResultsTable courses={getCurrentSessionCourses()} semester="2" />
+              <div className="animate-fadeInUp delay-200">
+                <ResultsTable courses={getCurrentSessionCourses()} semester="1" />
+              </div>
+              <div className="animate-fadeInUp delay-400">
+                <ResultsTable courses={getCurrentSessionCourses()} semester="2" />
+              </div>
             </div>
 
             {/* No courses message */}
             {getCurrentSessionCourses().length === 0 && (
-              <div className="bg-white rounded-lg shadow-lg p-8 text-center">
-                <p className="text-gray-600">
-                  No courses found for the current session.
-                </p>
+              <div className="animate-fadeInUp delay-600">
+                <div className="bg-white rounded-lg shadow-lg p-8 text-center">
+                  <p className="text-gray-600">
+                    No courses found for the current session.
+                  </p>
+                </div>
               </div>
             )}
           </div>
