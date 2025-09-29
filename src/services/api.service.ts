@@ -3,10 +3,8 @@
 import axios, { type AxiosError } from 'axios';
 import type { ApiResponse } from '../types/student.types';
 
-// Use proxy endpoint for development, direct URL for production
-const API_BASE_URL = import.meta.env.DEV 
-    ? '/api/student.php'  // Proxy endpoint for development
-    : 'https://uirms.ui.edu.ng/backend/student.php';  // Direct URL for production
+// Use Vercel API route for both development and production
+const API_BASE_URL = '/api/student';
 
 /**
  * Fetch student data by matric number
