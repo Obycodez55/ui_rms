@@ -56,7 +56,7 @@ export interface ApiResponse {
     student_data: StudentData;
     student_sessions: StudentSession[];
     student_courses: StudentCourse[];
-    student_auth_data: any[];
+    student_auth_data: unknown[];
     current_session: CurrentSession;
     message: string;
 }
